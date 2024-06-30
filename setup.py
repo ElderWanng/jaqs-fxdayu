@@ -1,10 +1,5 @@
 import codecs
-
-try:
-    from pip._internal.req import parse_requirements # for pip >= 10
-except ImportError:
-    from pip.req import parse_requirements
-
+import pkg_resources
 from os.path import dirname, join
 from setuptools import (
     find_packages,
@@ -22,7 +17,13 @@ def version():
         return f.read().decode('ascii').strip()
 
 
-requirements = [str(ir.req) for ir in parse_requirements("requirements.txt", session=False)]
+def parse_requirements(filename):
+    with open(filename, 'r') as f:
+        return [str(req) for req in pkg_resources.parse_requirements(f)]
+
+
+requirements = parse_requirements("requirements.txt")
+
 setup(
     name='jaqs_fxdayu',
     version=version(),
